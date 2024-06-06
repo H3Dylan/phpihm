@@ -1,18 +1,24 @@
-<?php 
-
-include('navbar.php');
+<?php
 session_start();
-
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
-
+include('navbar.php');
 require_once('config.php');
 
-$stmt = $pdo->query("SELECT * FROM jouets");
-$jouets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+try {
+    $stmt = $pdo->query("SELECT * FROM jouets");
+    $jouets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (empty($jouets)) {
+        echo "Aucun jouet trouvé."; // Message de débogage
+    } else {
+        echo "Nombre de jouets trouvés : " . count($jouets); // Message de débogage
+    }
+} catch (PDOException $e) {
+    die("Erreur de requête : " . $e->getMessage());
+}
 ?>
 
 <!DOCTYPE html>
@@ -43,27 +49,23 @@ $jouets = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php if (isset($_SESSION['admin']) && $_SESSION['admin']): ?>
         <div class="ajouter-jouet-form">
             <form action="ajouter_jouet.php" method="post">
-                <?php if (isset($_SESSION['admin']) && $_SESSION['admin']): ?>
-                    <form action="ajouter_jouet.php" method="post">
-                        <h2>Ajouter un Nouveau Jouet</h2>
-                        <label for="nom">Nom:</label>
-                        <input type="text" name="nom" required>
-                        <br>
-                        <label for="description">Description:</label>
-                        <textarea name="description" required></textarea>
-                        <br>
-                        <label for="prix">Prix:</label>
-                        <input type="text" name="prix" required>
-                        <br>
-                        <label for="quantite_stock">Quantité en stock:</label>
-                        <input type="number" name="quantite_stock" required>
-                        <br>
-                        <label for="image_url">URL de l'image:</label>
-                        <input type="text" name="image_url" required>
-                        <br>
-                        <button type="submit" name="ajouter_jouet">Ajouter Jouet</button>
-                    </form>
-                <?php endif; ?>
+                <h2>Ajouter un Nouveau Jouet</h2>
+                <label for="nom">Nom:</label>
+                <input type="text" name="nom" required>
+                <br>
+                <label for="description">Description:</label>
+                <textarea name="description" required></textarea>
+                <br>
+                <label for="prix">Prix:</label>
+                <input type="text" name="prix" required>
+                <br>
+                <label for="quantite_stock">Quantité en stock:</label>
+                <input type="number" name="quantite_stock" required>
+                <br>
+                <label for="image_url">URL de l'image:</label>
+                <input type="text" name="image_url" required>
+                <br>
+                <button type="submit" name="ajouter_jouet">Ajouter Jouet</button>
             </form>
         </div>
     <?php endif; ?>
