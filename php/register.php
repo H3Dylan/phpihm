@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $existingUser = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($existingUser) {
-        echo "L'utilisateur existe déjà, utiliser un autre login";
+        $error = "L'utilisateur existe déjà, utiliser un autre login";
     } else {
         $stmt = $pdo->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
         $stmt->execute([$username, $password]);
@@ -40,6 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <button type="submit">S'enregistrer</button>
             <a href="login.php">Sign in</a>
         </form>
+        <?php if (!empty($error)): ?>
+            <p style="color: red;"><?php echo $error; ?></p>
+        <?php endif; ?>
     </div>
 </body>
 </html>
